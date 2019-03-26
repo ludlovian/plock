@@ -1,0 +1,2 @@
+# plock
+Promise-based locking
