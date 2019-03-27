@@ -1,29 +1,37 @@
 'use strict';
 
-function plock () {
-  let _locked = false;
+function plock (width = 1) {
+  let _used = 0;
   let _waiters = [];
-  return {
-    lock,
-    release,
-    get locked () {
-      return _locked
+  return Object.defineProperties(
+    {},
+    {
+      lock: { configurable: true, enumerable: true, value: lock },
+      release: { configurable: true, enumerable: true, value: release },
+      locks: { configurable: true, enumerable: true, get: locks },
+      waiting: { configurable: true, enumerable: true, get: waiting }
     }
-  }
+  )
   function lock () {
-    if (!_locked) {
-      _locked = true;
+    if (_used < width) {
+      _used++;
       return Promise.resolve()
     }
     return new Promise(resolve => _waiters.push(resolve))
   }
   function release () {
-    if (!_locked) return
+    if (!_used) return
     if (_waiters.length) {
       _waiters.shift()();
     } else {
-      _locked = false;
+      _used--;
     }
+  }
+  function locks () {
+    return _used
+  }
+  function waiting () {
+    return _waiters.length
   }
 }
 

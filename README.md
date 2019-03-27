@@ -1,7 +1,7 @@
 # plock
 Promise-based locking
 
-Provides simple `await`-able one-at-a-time locking
+Provides simple `await`-able n-at-a-time locking
 
 ## API
 
@@ -9,25 +9,31 @@ Provides simple `await`-able one-at-a-time locking
 
 ```
 import plock from 'plock'
-const l = plock()
+const l = plock(width = 1)
 ```
 
-Creates a promise-based lock
+Creates a promise-based lock, with the requested width. The `width` is the
+maximum number of concurrent locks that can be taken before a requestor has to wait.
 
 ### lock
 
 `await l.lock()`
 
-Returns a promise which resolves when the lock has been granted to you. You **must** release the lock when finished.
+Returns a promise which resolves when the lock has been granted to you.
+
+The lock will stay with you until you `release` it.
+
 
 ### release
 
 `l.release()`
 
-Releases the lock, which can be taken by the next one waiting, if there is one.
+Releases the lock, allowing the next waiting process to take it, if there is one.
 
-### locked
+### locks
 
-`if (l.locked) { ... }`
+Returns the number of locks currently held
 
-Returns whether the lock is currently locked.
+### waiting
+
+Returns the number of acquirers waiting for locks
