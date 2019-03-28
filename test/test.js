@@ -1,7 +1,7 @@
 'use strict'
 
 import test from 'ava'
-import plock from '../src'
+import PLock from '../src'
 
 const isResolved = (p, ms = 20) =>
   new Promise(resolve => {
@@ -10,7 +10,7 @@ const isResolved = (p, ms = 20) =>
   })
 
 test('lock and release', async t => {
-  const l = plock()
+  const l = new PLock()
 
   t.is(l.locks, 0)
   await l.lock()
@@ -22,7 +22,7 @@ test('lock and release', async t => {
 })
 
 test('waiting for lock', async t => {
-  const l = plock()
+  const l = new PLock()
   await l.lock()
 
   const p1 = l.lock()
@@ -37,7 +37,7 @@ test('waiting for lock', async t => {
 })
 
 test('multiple width lock', async t => {
-  const l = plock(2)
+  const l = new PLock(2)
 
   await l.lock()
   t.is(l.locks, 1)
@@ -63,7 +63,7 @@ test('multiple width lock', async t => {
 })
 
 test('over-release lock', async t => {
-  const l = plock()
+  const l = new PLock(2)
   await l.lock()
   l.release()
   t.is(l.locks, 0)

@@ -1,38 +1,29 @@
 'use strict';
 
-function plock (width = 1) {
-  let _used = 0;
-  let _waiters = [];
-  return Object.defineProperties(
-    {},
-    {
-      lock: { configurable: true, enumerable: true, value: lock },
-      release: { configurable: true, enumerable: true, value: release },
-      locks: { configurable: true, enumerable: true, get: locks },
-      waiting: { configurable: true, enumerable: true, get: waiting }
-    }
-  )
-  function lock () {
-    if (_used < width) {
-      _used++;
+class PLock {
+  constructor (width = 1) {
+    this.width = width;
+    this.locks = 0;
+    this._awaiters = [];
+  }
+  lock () {
+    if (this.locks < this.width) {
+      this.locks++;
       return Promise.resolve()
     }
-    return new Promise(resolve => _waiters.push(resolve))
+    return new Promise(resolve => this._awaiters.push(resolve))
   }
-  function release () {
-    if (!_used) return
-    if (_waiters.length) {
-      _waiters.shift()();
+  release () {
+    if (!this.locks) return
+    if (this._awaiters.length) {
+      this._awaiters.shift()();
     } else {
-      _used--;
+      this.locks--;
     }
   }
-  function locks () {
-    return _used
-  }
-  function waiting () {
-    return _waiters.length
+  get waiting () {
+    return this._awaiters.length
   }
 }
 
-module.exports = plock;
+module.exports = PLock;
