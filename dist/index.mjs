@@ -25,7 +25,7 @@ class PLock {
   async exec (fn) {
     try {
       await this.lock();
-      return fn()
+      return await Promise.resolve(fn())
     } finally {
       this.release();
     }
