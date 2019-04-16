@@ -70,3 +70,23 @@ test('over-release lock', async t => {
   l.release()
   t.is(l.locks, 0)
 })
+
+test('exec', async t => {
+  const l = new PLock()
+  await l.lock()
+
+  const p = l.exec(() => 17)
+  t.false(await isResolved(p))
+
+  l.release()
+  t.true(await isResolved(p))
+  t.is(await p, 17)
+
+  await t.throwsAsync(
+    () => l.exec(
+      () => { throw new Error('oops') }
+    )
+  )
+
+  t.is(l.locks, 0)
+})

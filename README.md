@@ -37,3 +37,9 @@ Returns the number of locks currently held
 ### waiting
 
 Returns the number of acquirers waiting for locks
+
+### exec
+
+`answer = await l.exec(() => doStuff())`
+
+Shortcut to acquire the lock, execute the function, and release the lock

@@ -22,6 +22,14 @@ class PLock {
   get waiting () {
     return this._awaiters.length
   }
+  async exec (fn) {
+    try {
+      await this.lock();
+      return fn()
+    } finally {
+      this.release();
+    }
+  }
 }
 
 export default PLock;
