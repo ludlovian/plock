@@ -4,12 +4,18 @@ class PLock {
     this.locks = 0;
     this._awaiters = [];
   }
-  lock () {
+  lock (priority) {
     if (this.locks < this.width) {
       this.locks++;
       return Promise.resolve()
     }
-    return new Promise(resolve => this._awaiters.push(resolve))
+    return new Promise(resolve => {
+      if (priority) {
+        this._awaiters.unshift(resolve);
+      } else {
+        this._awaiters.push(resolve);
+      }
+    })
   }
   release () {
     if (!this.locks) return

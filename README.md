@@ -17,9 +17,11 @@ maximum number of concurrent locks that can be taken before a requestor has to w
 
 ### lock
 
-`await l.lock()`
+`await l.lock(priority)`
 
 Returns a promise which resolves when the lock has been granted to you.
+
+If `priority` is truthy, then you jump to the front of the queue
 
 The lock will stay with you until you `release` it.
 

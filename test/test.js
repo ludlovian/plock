@@ -82,11 +82,22 @@ test('exec', async t => {
   t.true(await isResolved(p))
   t.is(await p, 17)
 
-  await t.throwsAsync(
-    () => l.exec(
-      () => { throw new Error('oops') }
-    )
+  await t.throwsAsync(() =>
+    l.exec(() => {
+      throw new Error('oops')
+    })
   )
 
   t.is(l.locks, 0)
+})
+
+test('priority locks', async t => {
+  const l = new PLock()
+  await l.lock()
+  const p1 = l.lock()
+  const p2 = l.lock(true)
+
+  l.release()
+  t.true(await isResolved(p2))
+  t.false(await isResolved(p1))
 })
