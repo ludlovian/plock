@@ -40,6 +40,16 @@ Returns the number of locks currently held
 
 Returns the number of acquirers waiting for locks
 
+### whenIdle
+`await l.whenIdle()`
+
+Returns a promise that resolves when the lock is unused
+
+### whenBusy
+`await l.whenBusy()`
+
+Returns a promise that resolves when the lock is being used
+
 ### exec
 
 `answer = await l.exec(() => doStuff())`
