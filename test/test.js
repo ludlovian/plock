@@ -101,3 +101,29 @@ test('priority locks', async t => {
   t.true(await isResolved(p2))
   t.false(await isResolved(p1))
 })
+
+test('whenIdle & whenBusy', async t => {
+  const l = new PLock()
+  t.true(await isResolved(l.whenIdle()))
+
+  const whenBusy = l.whenBusy()
+  t.false(await isResolved(whenBusy))
+
+  // take lock 1
+  l.lock()
+  t.true(await isResolved(whenBusy))
+
+  const whenIdle = l.whenIdle()
+  t.false(await isResolved(whenIdle))
+
+  // queue up lock 2
+  l.lock()
+
+  // release lock 1, takes lock 2
+  l.release()
+  t.false(await isResolved(whenIdle))
+
+  // release lock 2, making it idle
+  l.release()
+  t.true(await isResolved(whenIdle))
+})

@@ -1,34 +1,53 @@
 'use strict';
 
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var PSwitch = _interopDefault(require('pswitch'));
+
+const priv = Symbol('priv');
+const resolved = Promise.resolve();
 class PLock {
   constructor (width = 1) {
-    this.width = width;
-    this.locks = 0;
-    this._awaiters = [];
+    Object.defineProperty(this, priv, {
+      value: {
+        width,
+        locks: 0,
+        waiting: [],
+        busy: new PSwitch(false)
+      }
+    });
   }
   lock (priority) {
-    if (this.locks < this.width) {
-      this.locks++;
-      return Promise.resolve()
+    const p = this[priv];
+    p.busy.set(true);
+    if (p.locks < p.width) {
+      p.locks++;
+      return resolved
     }
-    return new Promise(resolve => {
-      if (priority) {
-        this._awaiters.unshift(resolve);
-      } else {
-        this._awaiters.push(resolve);
-      }
-    })
+    return new Promise(resolve =>
+      priority ? p.waiting.unshift(resolve) : p.waiting.push(resolve)
+    )
   }
   release () {
-    if (!this.locks) return
-    if (this._awaiters.length) {
-      this._awaiters.shift()();
+    const p = this[priv];
+    if (!p.locks) return
+    if (p.waiting.length) {
+      p.waiting.shift()();
     } else {
-      this.locks--;
+      if (--p.locks === 0) p.busy.set(false);
     }
   }
   get waiting () {
-    return this._awaiters.length
+    return this[priv].waiting.length
+  }
+  get locks () {
+    return this[priv].locks
+  }
+  whenIdle () {
+    return this[priv].busy.when(false)
+  }
+  whenBusy () {
+    return this[priv].busy.when(true)
   }
   async exec (fn) {
     try {
