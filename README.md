@@ -9,19 +9,17 @@ Provides simple `await`-able n-at-a-time locking
 
 ```
 import plock from 'plock'
-const l = plock(width = 1)
+const l = plock({ width = 1 })
 ```
 
 Creates a promise-based lock, with the requested width. The `width` is the
 maximum number of concurrent locks that can be taken before a requestor has to wait.
 
-### lock
+### acquire
 
-`await l.lock(priority)`
+`await l.acquire()`
 
 Returns a promise which resolves when the lock has been granted to you.
-
-If `priority` is truthy, then you jump to the front of the queue
 
 The lock will stay with you until you `release` it.
 
@@ -32,23 +30,13 @@ The lock will stay with you until you `release` it.
 
 Releases the lock, allowing the next waiting process to take it, if there is one.
 
-### locks
+### count
 
 Returns the number of locks currently held
 
 ### waiting
 
 Returns the number of acquirers waiting for locks
-
-### whenIdle
-`await l.whenIdle()`
-
-Returns a promise that resolves when the lock is unused
-
-### whenBusy
-`await l.whenBusy()`
-
-Returns a promise that resolves when the lock is being used
 
 ### exec
 

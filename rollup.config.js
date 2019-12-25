@@ -3,7 +3,6 @@ import cleanup from 'rollup-plugin-cleanup'
 
 export default {
   input: 'src/index.js',
-  external: ['pswitch'],
   plugins: [
     cleanup(),
     process.env.NODE_ENV === 'production' && terser()
