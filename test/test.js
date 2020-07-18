@@ -1,11 +1,8 @@
 import test from 'ava'
+import promiseGoodies from 'promise-goodies'
 import PLock from '../src'
 
-const isResolved = (p, ms = 20) =>
-  new Promise(resolve => {
-    p.then(() => resolve(true))
-    setTimeout(() => resolve(false), ms)
-  })
+promiseGoodies()
 
 test('acquire and release', async t => {
   const l = new PLock()
@@ -24,11 +21,11 @@ test('waiting for lock', async t => {
   await l.acquire()
 
   const p1 = l.acquire()
-  t.false(await isResolved(p1))
+  t.false(await p1.isResolved())
 
   l.release()
   t.is(l.count, 1)
-  t.true(await isResolved(p1))
+  t.true(await p1.isResolved())
 
   l.release()
   t.is(l.count, 0)
@@ -45,7 +42,7 @@ test('multiple width lock', async t => {
 
   const p3 = l.acquire()
   t.is(l.waiting, 1)
-  t.false(await isResolved(p3))
+  t.false(await p3.isResolved())
 
   l.release()
   t.is(l.waiting, 0)
@@ -74,10 +71,10 @@ test('exec', async t => {
   await l.acquire()
 
   const p = l.exec(() => 17)
-  t.false(await isResolved(p))
+  t.false(await p.isResolved())
 
   l.release()
-  t.true(await isResolved(p))
+  t.true(await p.isResolved())
   t.is(await p, 17)
 
   const e = new Error('oops')
