@@ -5,23 +5,18 @@
   "source": "src/index.mjs",
   "module": "src/index.mjs",
   "main": "src/index.mjs",
+  "type": "module",
   "scripts": {
-    "clean": "rm -rf .nyc_output/ coverage/ node_modules/.cache/",
+    "clean": "rm -rf coverage/ node_modules/.cache/",
     "format": "prettier-standard {src,test}/*.{m,}js",
     "lint": "standard {src,test}/*.{m,}js|snazzy",
-    "test": "nyc ava",
-    "coverage": "npm run test && nyc report --reporter=html && sirv coverage/ -p 8000"
+    "test": "c8 ava",
+    "coverage": "npm run test && c8 report --reporter=html && sirv coverage/ -H 0.0.0.0 -p 8000"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "ava": "^3.15.0",
-    "esm": "^3.2.25",
     "promise-goodies": "github:ludlovian/promise-goodies"
-  },
-  "ava": {
-    "require": [
-      "esm"
-    ]
   }
 }

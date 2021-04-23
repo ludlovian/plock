@@ -1,6 +1,6 @@
 import test from 'ava'
 import promiseGoodies from 'promise-goodies'
-import PLock from '../src'
+import PLock from '../src/index.mjs'
 
 promiseGoodies()
 
