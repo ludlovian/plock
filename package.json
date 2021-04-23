@@ -1,6 +1,6 @@
 {
   "name": "plock",
-  "version": "1.4.5",
+  "version": "2.0.0",
   "description": "Promise-based locking",
   "source": "src/index.mjs",
   "module": "src/index.mjs",
