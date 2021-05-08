@@ -16,6 +16,7 @@ Creates a promise-based lock, with the requested width. The `width` is the
 maximum number of concurrent locks that can be taken before a requestor has to wait.
 
 ### acquire
+(also available as `lock`)
 
 `await l.acquire()`
 
@@ -25,6 +26,7 @@ The lock will stay with you until you `release` it.
 
 
 ### release
+(also available as `unlock`)
 
 `l.release()`
 

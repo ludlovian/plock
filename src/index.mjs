@@ -35,3 +35,6 @@ export default class PLock {
     }
   }
 }
+
+PLock.prototype.lock = PLock.prototype.acquire
+PLock.prototype.unlock = PLock.prototype.release

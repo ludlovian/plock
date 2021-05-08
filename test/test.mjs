@@ -98,4 +98,10 @@ test('exec', async () => {
   assert.is(l.count, 0)
 })
 
+test('synonyms', () => {
+  const l = new PLock()
+  assert.is(l.acquire, l.lock)
+  assert.is(l.release, l.unlock)
+})
+
 test.run()
